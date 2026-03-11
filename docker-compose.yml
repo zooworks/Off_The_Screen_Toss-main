@@ -1,0 +1,39 @@
+services:
+  # Stack 1 services (off-db, off-be, off-fe) removed to avoid conflicts with existing running instances.
+
+  off-fe-2:
+    image: off-fe-2:latest
+    build:
+      context: ./Off_sol
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://off-toss.eekky.com/api
+        - VITE_GOOGLE_MAPS_KEY=AIzaSyB_7fgirj-R6DRUcYhy1VF30wAtK2_HiHY
+        - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyB_7fgirj-R6DRUcYhy1VF30wAtK2_HiHY
+        - VITE_GOOGLE_CLIENT_ID=971714018482-04vb86gts4kntmhrvt18en861ua5fe57.apps.googleusercontent.com
+        - VITE_FILE_SERVICE_URL=https://file.eekky.com
+    container_name: off-fe-2
+    restart: unless-stopped
+    ports:
+      - "3014:80"
+    networks:
+      - off-network
+    environment:
+      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIzaSyB_7fgirj-R6DRUcYhy1VF30wAtK2_HiHY
+      - VITE_GOOGLE_MAPS_KEY=AIzaSyB_7fgirj-R6DRUcYhy1VF30wAtK2_HiHY
+      - VITE_GOOGLE_CLIENT_ID=971714018482-04vb86gts4kntmhrvt18en861ua5fe57.apps.googleusercontent.com
+      - VITE_API_URL=https://off-toss.eekky.com/api
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:80', r => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  off-network:
+    name: off-network
+    driver: bridge
+
+# No volumes needed for frontend only
