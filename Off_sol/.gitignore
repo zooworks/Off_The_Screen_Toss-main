@@ -1,2 +1,7 @@
 
 .granite
+
+# env files (local secrets)
+.env
+.env.local
+.env.*.local
